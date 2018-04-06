@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<script src="./assets/artTemplate/template-native.js"></script>
+<body>
+    <ul>
+    </ul>
+    <script type="text/template" id="navTemp">
+       <% for(var i=0;i<list.length;i++){%>
+           <% if(i==0){ %>
+
+            <p  style="color:red"><%=list[i].name%></p>
+            <p><%=list[i].age%></p>
+
+           <%} else{ %>
+            <p  style="color:yellow"><%=list[i].name%></p>
+            <p><%=list[i].age%></p>
+           <% }%>
+       <%}%>
+    </script>
+    <script>
+        // 准备数据
+        // var obj = {
+        //             name:'rose',
+        //             age:20
+        //         }
+        var obj = [
+                {
+                    name:'rose',
+                    age:20
+                }    ,
+                {
+                    name:'rose',
+                    age:20
+                }    
+            ];
+        console.log(template("navTemp",{"list":obj}));
+        document.querySelector("ul").innerHTML = template("navTemp",{"list":obj});
+    </script>
+</body>
+</html>

@@ -1,73 +1,53 @@
-/*³õÊ¼×ó²à¹ö¶¯*/
-mui('.lt_cateLeft').scroll({
-    indicators:false
-});
-/*³õÊ¼ÓÒ²à¹ö¶¯*/
-var scrollRight = mui('.lt_cateRight').scroll({
-    indicators:false
-});
 
-/*
- - äÖÈ¾¶¯Ì¬
- + ×ó²à·ÖÀà  ĞèÒª»ñÈ¡Ò»¼¶·ÖÀàÊı¾İ äÖÈ¾ÔÚÒ³Ãæµ±ÖĞ
- + Ä¬ÈÏÑ¡ÖĞÒ»¸ö·ÖÀà   ¼ÓÔØ³öµÚÒ»¸ö·ÖÀà¶ÔÓ¦µÄÊı¾İ  äÖÈ¾¶ş¼¶·ÖÀà£¨ÓÒ²àÄÚÈİ£©
- + µã»÷Ò»¼¶·ÖÀàµÄÊ±ºò  ĞèÒªÈ¥¼ÓÔØ¶ÔÓ¦µÄ·ÖÀàÊı¾İ   äÖÈ¾¶ş¼¶·ÖÀà£¨ÓÒ²àÄÚÈİ£©
- * */
-$(function () {
-    /*Ò³Ãæ*/
-    getFirstCategoryData(function (data) {
-        /*»ñÈ¡µ½ÁËÊı¾İ data*/
-        /*äÖÈ¾Ò»¼¶·ÖÀà*/
-        $('.lt_cateLeft').find('ul').html(template('firstCategory',data));
-        /*Ä¬ÈÏÒÑ¾­ÏÔÊ¾µÄÊÇµÚÒ»¸ö·ÖÀà*/
-        /*¸ù¾İµÚÒ»¸ö·ÖÀàµÄidÈ¥äÖÈ¾¶ş¼¶·ÖÀà*/
-        getSecondCategoryData({
-            id:data.rows[0].id /*µÚÒ»¸öÒ»¼¶·ÖÀàµÄid*/
-        },function(data){
-            /*äÖÈ¾¶ş¼¶·ÖÁË*/
-            $('.lt_cateRight').find('ul').html(template('secondCategory',data));
-        })
-    });
-    /*½»»¥*/
-    $('.lt_cateLeft').on('tap','ul li',function(){
-        /*¸Ä±äµ±Ç°ÑùÊ½*/
-        $('.lt_cateLeft').find('li').removeClass('now');
-        $(this).addClass('now');
-        /*Í¨¹ıidÈ¥»ñÈ¡¶ş¼¶·ÖÀàµÄÊı¾İ*/
-        /*»ñÈ¡µ±Ç°·ÖÀàµÄid*/
-        getSecondCategoryData({
-            id:$(this).data('id') /*µÚÒ»¸öÒ»¼¶·ÖÀàµÄid*/
-        },function(data){
-            /*äÖÈ¾¶ş¼¶·ÖÁË*/
-            $('.lt_cateRight').find('ul').html(template('secondCategory',data));
-            /*ĞèÒªÎ¨Ò»µ½0µÄÎ»ÖÃ  ¶¥²¿*/
-            scrollRight.scrollTo(0,0,100);
-        })
-    });
-});
-/*»ñÈ¡Ò»¼¶·ÖÀàÊı¾İ*/
-var getFirstCategoryData = function (callback) {
+$(function(){
+
+    // è·å–ä¸€çº§åˆ†ç±»æ•°æ®
     $.ajax({
-        type: 'get',
-        url: '/category/queryTopCategory',
-        data: {},
-        dataType: 'json',
-        success: function (data) {
-            /*×ö»ñÈ¡Êı¾İÖ®ºóµÄÊÂÇé*/
-            callback && callback(data);
+        type:'get',
+        url:'/category/queryTopCategory',
+        data:{},
+        dataType:'json',
+        success:function(result){
+            console.log(result);
+            // è°ƒç”¨æ¨¡æ¿å¼•æ“ç”ŸæˆåŠ¨æ€çš„ç»“æ„
+            // å¦‚æœæ•°æ®æ˜¯å¯¹è±¡å°±ç›´æ¥ä¼ å…¥å¯¹è±¡
+            // å¦‚æœæ•°æ®æ˜¯æ•°ç»„ï¼Œå°±åŒ…è£…ä¸ºå¯¹è±¡å†ä¼ é€’
+            // template(æ¨¡æ¿idåç§°ï¼Œæ•°æ®);
+            var html = template("firstCategoryTemp",result);
+            console.log(html);
+            $(".lt_left ul").html(html);
+
+            // æ¨¡æ‹Ÿç¬¬ä¸€ä¸ªä¸€çº§è¢«é€‰ä¸­çš„æ“ä½œï¼šåŠ è½½ä¸€çº§åˆ†ç±»çš„å¯¹åº”çš„äºŒçº§åˆ†ç±»æ•°æ®
+            getSecondCategory(result.rows[0].id);
         }
+    });
+
+    function getSecondCategory(id){
+        $.ajax({
+            type:'get',
+            url:'/category/querySecondCategory',
+            data:{"id":id},
+            dataType:'json',
+            success:function(result){
+                console.log(result);
+                var html = template("secondCategoryTemp",result);
+                $(".lt_secondC").html(html);
+            }
+        });
+    }
+
+    // åŠ¨æ€çš„ä¸ºä¸€çº§åˆ†ç±»å¯¼èˆªé¡¹æ·»åŠ äº‹ä»¶
+    // 1ä¸€å®šè¦ä¿è¯è¿™äº›å…ƒç´ åœ¨äº‹ä»¶è§¦å‘ä¹‹å‰å·²ç”Ÿæˆäº†
+    // 2.åŠ¨æ€ç”Ÿæˆçš„å…ƒç´ æ— æ³•ç›´æ¥æ·»åŠ äº‹ä»¶ï¼Œä¸€èˆ¬è€ƒè™‘ä½¿ç”¨äº‹ä»¶å§”æ‰˜
+    $(".firstCategoryNav").on("click","a",function(){
+        // ä¿®æ”¹æ ·å¼
+        $(this).parent().siblings().removeClass("active");
+        $(this).parent().addClass("active");
+        // è·å–äºŒçº§åˆ†ç±»æ•°æ®
+        var id = $(this).data("id");
+        // var id = $(this).attr("data-id");
+        // var id = $(this)[0].dataset["id"];
+        getSecondCategory(id);
     })
-}
-/*»ñÈ¡¶ş¼¶·ÖÀàµÄÊı¾İ*/
-var getSecondCategoryData = function(params,callback){
-    $.ajax({
-        type: 'get',
-        url: '/category/querySecondCategory',
-        data: params,
-        dataType: 'json',
-        success: function (data) {
-            /*×ö»ñÈ¡Êı¾İÖ®ºóµÄÊÂÇé*/
-            callback && callback(data);
-        }
-    });
-}
+
+});
